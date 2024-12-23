@@ -2,10 +2,14 @@ return {
   'mfussenegger/nvim-jdtls',
   dependencies = {
     'williamboman/mason.nvim',
+    'saghen/blink.cmp',
   },
   ft = { 'java' },
   config = function()
+    local client_capabilities = vim.lsp.protocol.make_client_capabilities()
+    local capabilities = require('blink.cmp').get_lsp_capabilities(client_capabilities)
     local config = {
+      capabilities = capabilities,
       cmd = {
         -- 💀
         'java', -- or '/path/to/java17_or_newer/bin/java'
@@ -65,6 +69,7 @@ return {
       --
       -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
       init_options = {
+        extendedClientCapabilities = require('jdtls').extendedClientCapabilities,
         bundles = {},
       },
     }
