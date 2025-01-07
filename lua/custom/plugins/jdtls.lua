@@ -5,7 +5,7 @@ return {
     'saghen/blink.cmp',
   },
   ft = { 'java' },
-  config = function()
+  opts = function()
     local client_capabilities = vim.lsp.protocol.make_client_capabilities()
     local capabilities = require('blink.cmp').get_lsp_capabilities(client_capabilities)
     local config = {
@@ -26,6 +26,7 @@ return {
         'java.base/java.util=ALL-UNNAMED',
         '--add-opens',
         'java.base/java.lang=ALL-UNNAMED',
+        '-javaagent:' .. require('mason-registry').get_package('jdtls'):get_install_path() .. '/lombok.jar',
 
         -- 💀
         '-jar',
@@ -73,6 +74,16 @@ return {
         bundles = {},
       },
     }
-    require('jdtls').start_or_attach(config)
+    return config
+  end,
+  config = function(_, opts)
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = { 'java' },
+      callback = function()
+        require('jdtls').start_or_attach(opts)
+      end,
+    })
+
+    require('jdtls').start_or_attach(opts)
   end,
 }
