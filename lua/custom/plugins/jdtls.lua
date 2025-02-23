@@ -3,6 +3,7 @@ return {
   dependencies = {
     'williamboman/mason.nvim',
     'saghen/blink.cmp',
+    'mfussenegger/nvim-dap',
   },
   ft = { 'java' },
   opts = function()
@@ -71,7 +72,14 @@ return {
       -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
       init_options = {
         extendedClientCapabilities = require('jdtls').extendedClientCapabilities,
-        bundles = {},
+        bundles = vim.list_extend(
+          vim.fn.glob(
+            require('mason-registry').get_package('java-debug-adapter'):get_install_path() .. '/extension/server/com.microsoft.java.debug.plugin-*.jar',
+            false,
+            true
+          ),
+          vim.fn.glob(require('mason-registry').get_package('java-test'):get_install_path() .. '/extension/server/*.jar', false, true)
+        ),
       },
     }
     return config
